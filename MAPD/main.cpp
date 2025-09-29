@@ -301,12 +301,12 @@ int main(int argc, char** argv){
     else{
         // offline/one-shot mode
         taskAssignment->initializeOneShot();
-        taskAssignment->assignTasks();
+        bool assigned_in_time = taskAssignment->assignTasks();
         if(screen>=1){
             cout<<"TA done"<<endl;
         }
 
-        if(vm.count("anytime")){
+        if(assigned_in_time && vm.count("anytime")){
             taskAssignment->optimize();
 
             if(vm["anytime-log"].as<string>() != ""){
@@ -339,12 +339,13 @@ int main(int argc, char** argv){
 
         if(options1.s == constraint_strategy::PP || vm.count("only-assignment")){
 
-            cout <<"Number agents: "<<agentLoader->num_of_agents<<" Number tasks: "<<taskLoader->num_of_tasks
+            cout <<"Success: " << assigned_in_time
+                 <<" Number agents: "<<agentLoader->num_of_agents<<" Number tasks: "<<taskLoader->num_of_tasks
                  << " Ideal total cost: " << ideal_cost
                  <<", Real cost: "<< total_cost
                  <<", Makespan: "<< taskAssignment->current_makespan
                  <<", Ideal total delay: "<< ideal_delay
-                 <<", Real dealy: "<< total_delay<<", TA Runtime: "<<taskAssignment->runtime/CLOCKS_PER_SEC<<
+                 <<", Real dealy: "<< total_delay<<", Runtime: "<<taskAssignment->runtime/CLOCKS_PER_SEC<<
                  ", No of agents with tasks: "<< taskAssignment->get_num_agents_with_tasks()<<endl;
             cout << "runtime_pp: "<< taskAssignment->runtime_pp/CLOCKS_PER_SEC<<
                  " runtime_update_conflict: "<< taskAssignment->runtime_update_conflict/CLOCKS_PER_SEC<<
@@ -357,7 +358,7 @@ int main(int argc, char** argv){
 
                 ofstream stats;
                 stats.open(output, ios::app);
-                stats <<"1"<<","<<agentLoader->num_of_agents<<
+                stats <<assigned_in_time<<","<<agentLoader->num_of_agents<<
                       ","<<taskLoader->num_of_tasks<<
                       ","<< ideal_cost <<","<<total_cost << "," << ideal_delay <<","<< total_delay << ","
                       <<taskAssignment->current_makespan<<","<<taskAssignment->current_makespan<<","

@@ -1,0 +1,7 @@
+- One-shot Experiment = offline = all the tasks are initially released
+- research on readme and code suggests that we'll need to use pp to test mca 
+    - "we propose several algorithms for simultaneous task assignment and path planning"
+    - "Overall we can see that the decoupled methods are never the best, thus justifying that we want to solve this problem in"
+    - "We now introduce the marginal-cost based task assignment algorithm (MCA)..."
+- The original repo only time-limited the anytime improvement this fork applies the limit to the entire program (see modifications to TaskAssignment and main.cpp)
+- This fork also removes all examples that have delay task release

@@ -9,3 +9,7 @@ debug
 MAPD/.DS_Store
 
 cmake-build*
+
+results_*/
+
+out-quick.txt

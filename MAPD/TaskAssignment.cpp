@@ -140,7 +140,7 @@ bool TaskAssignment::assignTasks() {
 
 
     runtime = (std::clock() - start);
-    return true;
+    return (runtime / CLOCKS_PER_SEC) <= ta_option.time_limit;
 }
 
 bool TaskAssignment::optimize(std::unordered_set<int> awaiting_tasks) {
@@ -168,13 +168,15 @@ bool TaskAssignment::optimize(std::unordered_set<int> awaiting_tasks) {
             awaiting_tasks.insert(t->task_id);
         }
     }
-    while (iteration< ta_option.max_iteration && (runtime-op_start_time)/CLOCKS_PER_SEC < ta_option.time_limit ){
+    while (iteration< ta_option.max_iteration && (op_start_time)/CLOCKS_PER_SEC < ta_option.time_limit ){
         if (remove_hist.size() >= awaiting_tasks.size()){
             remove_hist.clear();
         }
         iteration++;
 
-        selectRemoveRepair(awaiting_tasks);
+        bool done_in_time = selectRemoveRepair(awaiting_tasks);
+        if (!done_in_time)
+            break;
 
         runtime = (std::clock() - start);
 
@@ -464,7 +466,8 @@ bool TaskAssignment::selectRemoveRepair(std::unordered_set<int>& awaiting_tasks)
         if (screen >= 3)
             cout << "Start assignment" << endl;
 
-        assignTasks();
+        bool assigned_in_time = assignTasks();
+        if (!assigned_in_time) return false;
 
         if (screen >= 2)
             cout << "Makespan after re-assignment: " << current_makespan << ", Delay after re-assignment: "
